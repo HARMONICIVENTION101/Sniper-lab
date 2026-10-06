@@ -2,42 +2,15 @@ name: Build APK
 on: [push]
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    container:
+      image: kivy/buildozer:latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: Setup Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install system deps
-        run: |
-          sudo apt update
-          sudo apt install -y zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev automake build-essential libltdl-dev
-          pip install --upgrade pip
-          pip install buildozer cython==0.29.33
-
-      - name: Accept Licenses and Install Tools
-        run: |
-          yes | sdkmanager --licenses
-          sdkmanager "build-tools;33.0.2" "platforms;android-33" "platform-tools" "ndk;25.1.8937393"
-
-      - name: Build APK
-        run: |
+      - run: |
+          git config --global --add safe.directory $GITHUB_WORKSPACE
           buildozer android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: SniperVenom25-APK
           path: bin/*.apk
