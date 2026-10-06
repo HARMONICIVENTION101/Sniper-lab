@@ -17,20 +17,20 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
       - name: Install system deps
         run: |
           sudo apt update
-          sudo apt install -y zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev automake build-essential
+          sudo apt install -y zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev automake build-essential libltdl-dev
           pip install --upgrade pip
           pip install buildozer cython==0.29.33
 
-      - name: Accept Android Licenses
+      - name: Accept Licenses and Install Tools
         run: |
-          mkdir -p $HOME/.android
-          echo "count=0" > $HOME/.android/repositories.cfg
-          yes | sdkmanager --licenses || true
-          sdkmanager "build-tools;33.0.2" "platforms;android-33" "platform-tools"
-          yes | sdkmanager --licenses || true
+          yes | sdkmanager --licenses
+          sdkmanager "build-tools;33.0.2" "platforms;android-33" "platform-tools" "ndk;25.1.8937393"
 
       - name: Build APK
         run: |
